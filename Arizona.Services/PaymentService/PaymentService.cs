@@ -3,6 +3,7 @@ using Arizona.Core.Entities;
 using Arizona.Core.Entities.OrderAggregate;
 using Arizona.Core.Repositories.Contract;
 using Arizona.Core.Services.Contract;
+using Arizona.Core.Specifications.OrderSpecs;
 using Microsoft.Extensions.Configuration;
 using Stripe;
 using System;
@@ -47,7 +48,7 @@ namespace Arizona.Application.PaymentService
                 basket.ShippingPrice = shippingPrice;
             }
 
-            if (basket.Items.Count > 0)
+            if (basket.Items?.Count > 0)
             {
                 var productRepo = _unitOfWork.Repository<Product>();
                 foreach (var item in basket.Items)
@@ -61,7 +62,7 @@ namespace Arizona.Application.PaymentService
             PaymentIntent paymentIntent;
             PaymentIntentService paymentIntentService = new PaymentIntentService();
 
-            if (string.IsNullOrEmpty(basket.PaymentIntentId))
+            if (string.IsNullOrEmpty(basket.PaymentIntentId)) //Create new payment intent
             {
                 var options = new PaymentIntentCreateOptions()
                 {
@@ -70,12 +71,12 @@ namespace Arizona.Application.PaymentService
                     PaymentMethodTypes = new List<string>() { "card" }
                 };
 
-                paymentIntent = await paymentIntentService.CreateAsync(options);
+                paymentIntent = await paymentIntentService.CreateAsync(options); //Integration with stripe
 
                 basket.PaymentIntentId = paymentIntent.Id;
                 basket.ClientSecret = paymentIntent.ClientSecret;
             }
-            else
+            else //update existing payment intent
             {
                 var options = new PaymentIntentUpdateOptions()
                 {
@@ -91,6 +92,27 @@ namespace Arizona.Application.PaymentService
             await _basketRepo.UpdateBasketAsync(basket);
 
             return basket;
+
+        }
+
+        public async Task<Order?> UpdateOrderStatus(string paymentIntentId, bool isPaid)
+        {
+            var orderRepo = _unitOfWork.Repository<Order>();
+            var spec = new OrderWithPaymentIntentSpecifications(paymentIntentId);
+            var order = await orderRepo.GetWithSpecAsync(spec);
+
+            if (order is null) return null;
+
+            if (isPaid)
+                order.Status = OrderStatus.PaymentReceived; 
+            else
+                order.Status = OrderStatus.PaymentFailed;
+
+            orderRepo.Update(order); 
+
+            await _unitOfWork.CompleteAsync();
+
+            return order;
 
         }
     }

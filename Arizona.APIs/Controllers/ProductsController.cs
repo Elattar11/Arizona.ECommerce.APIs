@@ -31,7 +31,7 @@ namespace Arizona.APIs.Controllers
 
 
         //  /api/Products
-        [Authorize]
+        [Cashed(600)]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams specParams)
         {
@@ -43,6 +43,7 @@ namespace Arizona.APIs.Controllers
             var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
 
             return Ok(new Pagination<ProductToReturnDto>(specParams.PageIndex , specParams.PageSize , count , data));
+
 
             //ok return object from OkObjectResult and status code 200ok 
         }

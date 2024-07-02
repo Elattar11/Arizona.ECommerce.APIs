@@ -159,9 +159,12 @@ namespace Arizona.Infrastructure.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("ProductBrands");
                 });
@@ -190,7 +193,7 @@ namespace Arizona.Infrastructure.Data.Migrations
                         .HasForeignKey("DeliveryMethodId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsOne("Arizona.Core.Entities.OrderAggregate.Address", "ShippingAddress", b1 =>
+                    b.OwnsOne("Arizona.Core.Entities.OrderAggregate.OrderAddress", "ShippingAddress", b1 =>
                         {
                             b1.Property<int>("OrderId")
                                 .HasColumnType("int");

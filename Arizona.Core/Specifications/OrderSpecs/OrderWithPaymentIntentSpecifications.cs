@@ -9,7 +9,7 @@ namespace Arizona.Core.Specifications.OrderSpecs
 {
     public class OrderWithPaymentIntentSpecifications : BaseSpecifications<Order>
     {
-        public OrderWithPaymentIntentSpecifications(string? paymentIntentId)
+        public OrderWithPaymentIntentSpecifications(string paymentIntentId)
             : base(O => O.PaymentInternId == paymentIntentId)
         {
 

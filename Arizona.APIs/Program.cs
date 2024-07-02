@@ -46,6 +46,14 @@ namespace Arizona.APIs
 
             builder.Services.AddAuthServices(builder.Configuration);
 
+            builder.Services.AddCors( options =>
+            {
+                options.AddPolicy("MyPolicy", policyOptions =>
+                {
+                    policyOptions.AllowAnyHeader().AllowAnyMethod().WithOrigins(builder.Configuration["FrontBaseUrl"]);
+                });
+            });
+
             builder.Services.AddApplicationServices();
 
 
@@ -103,7 +111,9 @@ namespace Arizona.APIs
 
             app.UseStaticFiles();
 
-            app.MapControllers();
+            app.UseCors("MyPolicy");
+
+            app.MapControllers(); 
 
             app.Run(); 
 

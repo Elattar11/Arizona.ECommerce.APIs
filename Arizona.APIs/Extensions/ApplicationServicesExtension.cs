@@ -1,6 +1,7 @@
 ﻿using Arizona.APIs.Errors;
 using Arizona.APIs.Helpers;
 using Arizona.Application.AuthService;
+using Arizona.Application.CashService;
 using Arizona.Application.OrderService;
 using Arizona.Application.PaymentService;
 using Arizona.Application.ProductService;
@@ -52,6 +53,8 @@ namespace Arizona.APIs.Extensions
             services.AddScoped(typeof(IProductService), typeof(ProductService));
 
             services.AddScoped(typeof(IPaymentService), typeof(PaymentService));
+
+            services.AddSingleton(typeof(IResponseCashService), typeof(ResponseCashService));
 
             return services;
         }
