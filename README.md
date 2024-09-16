@@ -1,4 +1,4 @@
-<h1>E-Commerce Web API</h1>
+<h1>Arizona E-Commerce Web API</h1>
 <h2>Overview</h2>
 <p>This project is designed using the Onion Architecture Pattern to ensure a scalable, maintainable, and loosely coupled solution. It is structured to follow the principles of dependency injection and clean architecture, keeping the core of the system independent from external concerns like data access, services, and UI.</p>
 
